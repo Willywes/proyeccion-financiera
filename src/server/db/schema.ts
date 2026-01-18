@@ -24,10 +24,8 @@ export const categories = createTable("category", (d) => ({
   id: d.integer({ mode: "number" }).primaryKey({ autoIncrement: true }),
   name: d.text({ length: 255 }).notNull(),
   type: d.text({ enum: categoryTypeEnum }).notNull(),
-  userId: d
-    .text({ length: 255 })
-    .notNull()
-    .references(() => users.id),
+  userId: d.text({ length: 255 }).notNull(),
+  // .references(() => users.id),
   createdAt: d
     .integer({ mode: "timestamp" })
     .default(sql`(unixepoch())`)
@@ -76,10 +74,8 @@ export const savingsConfig = createTable("savings_config", (d) => ({
   id: d.integer({ mode: "number" }).primaryKey({ autoIncrement: true }),
   name: d.text({ length: 255 }).notNull(),
   percentage: d.real().notNull(), // e.g., 0.20 for 20%
-  userId: d
-    .text({ length: 255 })
-    .notNull()
-    .references(() => users.id),
+  userId: d.text({ length: 255 }).notNull(),
+  // .references(() => users.id),
   createdAt: d
     .integer({ mode: "timestamp" })
     .default(sql`(unixepoch())`)
