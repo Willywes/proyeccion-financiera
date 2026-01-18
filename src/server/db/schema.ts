@@ -52,8 +52,8 @@ export const transactions = createTable("transaction", (d) => ({
     .integer({ mode: "number" })
     .notNull()
     .references(() => items.id),
-  projectedAmount: d.real().notNull().default(0),
-  finalAmount: d.real().notNull().default(0),
+  amount: d.real().notNull().default(0),
+  projectedAmount: d.real(),
   dueDate: d.integer({ mode: "timestamp" }).notNull(),
   status: d
     .text({ enum: transactionStatusEnum })

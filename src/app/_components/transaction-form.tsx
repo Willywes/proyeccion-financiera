@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 
 const formSchema = z.object({
@@ -88,7 +89,8 @@ export function TransactionForm({ onSuccess }: TransactionFormProps) {
 
       await createTransaction.mutateAsync({
         itemId,
-        projectedAmount: Number(values.amount),
+        amount: Number(values.amount),
+        projectedAmount: Number(values.amount), // Por defecto en creación inicial, ambos son iguales
         dueDate: new Date(values.dueDate),
         totalInstallments: Number(values.installments),
         description: values.description,
@@ -190,6 +192,24 @@ export function TransactionForm({ onSuccess }: TransactionFormProps) {
               <FormLabel>Cuotas (1 para pago único)</FormLabel>
               <FormControl>
                 <Input type="number" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Notas / Comentarios (Opcional)</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Detalles adicionales..."
+                  className="resize-none"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

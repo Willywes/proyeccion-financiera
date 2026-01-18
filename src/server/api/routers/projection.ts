@@ -69,7 +69,8 @@ export const projectionRouter = createTRPCRouter({
     .input(
       z.object({
         itemId: z.number(),
-        projectedAmount: z.number(),
+        amount: z.number(),
+        projectedAmount: z.number().optional().nullable(),
         dueDate: z.date(),
         status: z.enum(transactionStatusEnum).default("ESTIMATED"),
         totalInstallments: z.number().optional().default(1),
@@ -84,8 +85,8 @@ export const projectionRouter = createTRPCRouter({
         for (let i = 0; i < input.totalInstallments; i++) {
           batch.push({
             itemId: input.itemId,
+            amount: input.amount,
             projectedAmount: input.projectedAmount,
-            finalAmount: 0,
             dueDate: addMonths(normalizedDate, i),
             status: input.status,
             installmentNumber: i + 1,
@@ -100,8 +101,8 @@ export const projectionRouter = createTRPCRouter({
         .insert(transactions)
         .values({
           itemId: input.itemId,
+          amount: input.amount,
           projectedAmount: input.projectedAmount,
-          finalAmount: 0,
           dueDate: normalizedDate,
           status: input.status,
           installmentNumber: 1,
@@ -115,10 +116,11 @@ export const projectionRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.number(),
-        projectedAmount: z.number().optional(),
-        finalAmount: z.number().optional(),
+        amount: z.number().optional(),
+        projectedAmount: z.number().nullable().optional(),
         status: z.enum(transactionStatusEnum).optional(),
         dueDate: z.date().optional(),
+        description: z.string().nullable().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -127,6 +129,15 @@ export const projectionRouter = createTRPCRouter({
         .update(transactions)
         .set(data)
         .where(eq(transactions.id, id))
+        .returning();
+    }),
+
+  deleteTransaction: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db
+        .delete(transactions)
+        .where(eq(transactions.id, input.id))
         .returning();
     }),
 
